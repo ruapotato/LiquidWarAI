@@ -1,0 +1,7 @@
+# Training runs, checkpoints, sweep logs, rendered frames
+runs/
+# Compiled Liquid War 6 kernel and exported policy weights
+build/
+__pycache__/
+*.pyc
+.pytest_cache/

@@ -1,0 +1,76 @@
+# fluxwar default config. All hyperparameters live here, not in source.
+sim:
+  H: 64
+  W: 64
+  B: 512
+  K_RELAX: 8            # potential relaxation passes per tick
+  acts_per_tick: 2      # LW6's moves_per_round: two acts against one gradient
+  temp: 1.0             # advection softmax temperature (tuned against real LW6)
+  tau: 0.5              # softmin temperature for differentiable relaxation
+  soft_field: false     # true -> softmin relaxation (differentiable path)
+  SPEED: 0.6            # fraction of a cell's mass that moves per act; must be <= 1
+  RATE_DT: 0.05          # = fighter_attack / max_fighter_health from LW6 (500 / 10000)
+  DEFEND_DT: 0.005       # = fighter_defense / max_fighter_health (50 / 10000)
+  REGEN_DT: 0.0005       # = fighter_regenerate / max_fighter_health (5 / 10000)
+  threshold_sharpness: 3.0   # how sharply healing suppresses weak attacks
+  attack_isotropy: 0.6  # blend of directional and all-directions attack; see core.advect
+  track_health: false   # optional health field; measured WORSE than without, see docs/results.md
+  new_health: 0.5       # LW6's fighter_new_health / max_fighter_health, used only with track_health
+  action_mode: velocity # velocity = the human constraint (bounded speed);
+                        # target = the bot constraint (place the cursor anywhere,
+                        # which is what LW6's mod-brute does)
+  MAX_CURSOR_SPEED: 4.0 # cells per round. Not an LW6 rule -- the kernel does not
+                        # limit the cursor at all -- but 1 cell at 50 rounds/s is far
+                        # slower than a hand and left half of all games with no
+                        # contact at all. See docs/fidelity.md.
+  capacity: 1.0         # soft one-fighter-per-cell exclusion; 0 disables it
+  crowd_sharpness: 3.0  # how hard the capacity limit bites
+  capacity_iters: 2     # fixed-point rounds for the inflow cap (see core.advect)
+  episode_len: 1024
+  seed_radius: 3.0      # radius of the differentiable euclidean cursor seed
+  LARGE: 1.0e4          # potential value for walls / unreached cells
+  diag_cost: 1.41421356 # sqrt(2)
+  dtype: float32
+
+map:
+  kind: rooms           # blobs | rooms | open
+  wall_frac: 0.25
+  spawn_radius: 6.0     # radius of each team's initial density blob
+  spawn_mass: 400.0     # fighters per team -- density is in fighters/cell, so capacity 1.0 means one per cell
+
+policy:
+  channels: [32, 64, 64]
+  hidden: 128
+  obs_downsample: 1
+
+ppo:
+  total_env_steps: 20000000
+  rollout_len: 64
+  num_envs: 512
+  epochs: 4
+  minibatches: 4
+  lr: 3.0e-4
+  clip: 0.2
+  gamma: 0.99
+  gae_lambda: 0.95
+  ent_coef: 0.003
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+  pool_size: 8
+  pool_every: 50        # iterations between checkpoint snapshots
+
+bptt:
+  total_env_steps: 20000000
+  H_BPTT: 32
+  checkpoint: true      # recompute each tick in backward; without it a 32-tick window OOMs
+  num_envs: 128
+  lr: 3.0e-4
+  gamma: 0.99
+  max_grad_norm: 1.0
+  alpha: 1.0            # 1.0 = pure analytical, 0.0 = pure reinforce
+  pool_size: 8
+  pool_every: 50
+
+eval:
+  games: 200
+  episode_len: 512
