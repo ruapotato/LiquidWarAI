@@ -103,6 +103,19 @@ python -m fluxwar.deploy.export --policy runs/ppo/policy.pt --out build/policy.f
 python -m fluxwar.eval.deployed --weights build/policy.flxw --against brute follow
 ```
 
+## Does it beat the bots the game ships with?
+
+`mod-follow`: yes, 0.77 of the population, 83% of games. `mod-brute`: no — it takes
+roughly one game in five off it (0.14–0.23 share). Brute forward-simulates a sandbox
+copy of the game and **teleports its cursor anywhere on the map every round**, which
+no hand can answer; capped to the same mobility the policy has, an earlier policy was
+already level with it at 0.44.
+
+Trained against an unconstrained brute, the agent with brute's own action space
+(place the cursor anywhere) climbed to 0.27 share; the agent with the human
+constraint (bounded speed) never won a single game in 8.1 million steps. Same
+opponent, same budget, one variable — see `docs/action-spaces.md`.
+
 ## The headline
 
 At matched wall clock on the same simulator, backpropagating through the simulator

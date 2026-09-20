@@ -174,6 +174,50 @@ which wastes both training signal and evaluation resolution. And the win rate ag
 a fixed baseline, the metric the milestone asked for, is exactly the metric that says
 the two are equal; the head-to-head is what separates them.
 
+## Two agents against an unconstrained mod-brute
+
+The controlled version of "can we beat the bot the game ships with". Both agents:
+PPO, real LW6 games in worker processes, opponent `mod-brute` with **no** cap on its
+cursor (it teleports, driven natively inside each worker), 3 hours each, same maps,
+same budget. The only difference is what the agent's own cursor may do.
+
+Training, share of the population against brute:
+
+| | steps | first eval | best | final | best win rate |
+| --- | --- | --- | --- | --- | --- |
+| **velocity** (human constraint) | 8.14M | 0.079 | 0.080 | 0.078 | 0.017 |
+| **target** (bot constraint) | 7.84M | 0.053 | 0.271 | 0.227 | 0.217 |
+
+Deployed in the real game, opponents unconstrained (12 games, 600 rounds, 64x64):
+
+| | vs `mod-brute` | vs `mod-follow` | vs stationary |
+| --- | --- | --- | --- |
+| velocity | 0.099 / 8% wins | 0.446 / 33% | 0.544 / 58% |
+| target | 0.141 / 17% wins | 0.773 / 83% | 0.595 / 67% |
+
+**Neither beats mod-brute.** But the separation is not subtle. Over 8.1 million steps
+the velocity agent never won a single training game against it -- its share was 0.079
+at the first evaluation and 0.078 at the last, fifty-three evaluations later, with no
+trend in between. The target agent climbed from 0.053 to 0.27 within the first three
+million steps and now takes roughly one game in five.
+
+Same opponent, same budget, one variable. On this matchup the action space decides
+the outcome, not the policy.
+
+Two honest qualifications. The deployed number for the target agent (0.141) is below
+its training evaluation (0.227) and below a mid-run spot check (0.212); episode
+length and map draw differ between the harnesses and 12 games is a wide interval, so
+treat 0.14-0.23 as the range rather than any single figure. And the velocity agent
+trained only against brute is *worse* against `mod-follow` (0.446) than the earlier
+policy trained on the density sim (0.727) -- training exclusively against an opponent
+that gives you no signal produces a poor general policy, not just a poor
+anti-brute one.
+
+For what a bounded cursor can achieve at all, independent of learning, see
+`docs/action-spaces.md`: hand-written velocity policies score roughly 0.01 to 0.13
+against the same opponent, with enough variance that the trained agent's 0.05-0.10
+is not distinguishable from them.
+
 ## A hypothesis that did not survive contact
 
 The density sim's biggest error is one-sided: it over-rewards aggression. The obvious
