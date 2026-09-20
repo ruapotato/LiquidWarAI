@@ -1,0 +1,22 @@
+=== curriculum velocity agent, Sun Sep 20 11:52:14 AM PDT 2026 ===
+--- stage v1
+    steps    313,344  win 0.733  share 0.648
+    steps    620,544  win 0.833  share 0.703
+    steps    927,744  win 0.533  share 0.538
+    steps  1,234,944  win 0.817  share 0.727
+    steps  1,542,144  win 0.633  share 0.578
+    steps  1,849,344  win 0.850  share 0.684
+    steps  2,156,544  win 0.733  share 0.631
+    steps  2,463,744  win 0.833  share 0.715
+    steps  2,770,944  win 0.850  share 0.776
+    steps  3,078,144  win 0.883  share 0.699
+    steps  3,385,344  win 0.900  share 0.791
+    steps  3,692,544  win 0.850  share 0.774
+    steps  3,999,744  win 0.800  share 0.732
+    steps  4,306,944  win 0.833  share 0.757
+    steps  4,614,144  win 0.833  share 0.763
+    steps  4,921,344  win 0.867  share 0.765
+    steps  5,228,544  win 0.717  share 0.686
+    steps  5,535,744  win 0.750  share 0.713
+    steps  5,842,944  win 0.867  share 0.775
+--- stage v2

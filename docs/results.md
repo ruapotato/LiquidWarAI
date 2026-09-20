@@ -218,6 +218,33 @@ For what a bounded cursor can achieve at all, independent of learning, see
 against the same opponent, with enough variance that the trained agent's 0.05-0.10
 is not distinguishable from them.
 
+### Was the velocity agent's flatness the constraint, or the training?
+
+Partly answered. The same velocity agent, trained against `mod-follow` instead of
+`mod-brute`, learns perfectly well:
+
+| steps | win rate vs mod-follow | share |
+| --- | --- | --- |
+| 0.3M | 0.73 | 0.648 |
+| 1.2M | 0.82 | 0.727 |
+| 3.4M | 0.90 | 0.791 |
+| 5.8M | 0.87 | 0.775 |
+
+So the bounded-cursor action space is not the problem in general -- a velocity policy
+can reach 0.87 win rate against a real LW6 bot. Its flatness against `mod-brute` is
+specific to that opponent, which is consistent with the measured ceiling in
+`docs/action-spaces.md`: against something that repositions instantly, there is very
+little for any bounded cursor to climb.
+
+It also explains the earlier oddity that the brute-trained velocity agent was *worse*
+against `mod-follow` (0.446) than a policy that never trained against LW6 bots at all
+(0.727). Training exclusively against an opponent that gives no signal does not just
+fail to help; it degrades the policy.
+
+The second half -- warm-starting that agent into `mod-brute` to see whether a
+foothold transfers -- was started and stopped before producing numbers. Everything
+needed to run it is in `scripts/curriculum_velocity.sh`.
+
 ## A hypothesis that did not survive contact
 
 The density sim's biggest error is one-sided: it over-rewards aggression. The obvious
